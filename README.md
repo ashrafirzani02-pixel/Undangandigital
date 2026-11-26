@@ -11,12 +11,14 @@ Aesthetic digital invitation studio built with React + Vite.
 ## Vercel
 Framework: Vite · Build command: npm run build · Output: dist
 
-## Included
-- Responsive dashboard and navigation
-- Invitation editor with live preview
-- Four visual themes: Ivory, Botanical, Noir Luxe, Soft Blush
-- Event details and share-link copy action
-- Guest RSVP demo (browser-session state)
+## V1.2 features
+- Responsive dashboard and invitation editor
+- Four themes: Ivory, Botanical, Noir Luxe, Soft Blush
+- Draft auto-save in the current browser via localStorage
+- Shareable invitation URL carrying encoded invitation details
+- Dedicated public invitation landing page
+- Event date countdown and Google Maps search link
+- RSVP form opens WhatsApp with guest response prefilled
 
-## Production roadmap
-Persistent invitation URLs, database, authentication, image/audio storage, durable RSVP, maps, QR codes, and payment integration are not yet configured. Current RSVP and media features are frontend demo placeholders.
+## Important limitations
+This version is frontend-only. Drafts are stored in the current browser and are not synced to a cloud database. RSVP is sent to the host through WhatsApp; it is not stored centrally. The share URL contains the invitation details in its query string. For multi-user accounts, cloud image/audio uploads, durable RSVP records, admin dashboard, and payment, connect a backend/database and storage service.
