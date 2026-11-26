@@ -1,11 +1,13 @@
-import React,{useState} from "react";
+import React,{useState,useEffect} from "react";
 import{createRoot}from"react-dom/client";
 import{Heart,LayoutDashboard,Palette,Image,Music2,MapPin,CalendarDays,MessageCircle,Share2,Eye,Plus,Sparkles,Check,Copy,ExternalLink,Menu,X,ChevronRight,Flower2,Users,Settings2,Clock3}from"lucide-react";
+import PublicInvite from "./PublicInvite.jsx";
 import"./style.css";
 const themes=[{id:"ivory",name:"The Ivory",desc:"Clean · Elegant",color:"#eee5d8"},{id:"botanical",name:"Botanical",desc:"Nature · Calm",color:"#aab7a0"},{id:"noir",name:"Noir Luxe",desc:"Bold · Premium",color:"#262626"},{id:"blush",name:"Soft Blush",desc:"Warm · Romantic",color:"#e8c9c6"}];
 const initial={bride:"Aurelia",groom:"Nathan",date:"2027-06-12",time:"10:00 WIB",venue:"The Glass House",address:"Jl. Senopati No. 25, Jakarta Selatan",story:"Dengan penuh rasa syukur, kami mengundang keluarga dan sahabat untuk hadir dan menjadi bagian dari hari bahagia kami.",phone:"6281234567890",theme:"ivory"};
-function App(){const[d,S]=useState(initial),[tab,T]=useState("overview"),[mobile,M]=useState(false),[preview,P]=useState(false),[toast,Q]=useState(""),[guests,G]=useState([]),[guest,GN]=useState(""),[status,ST]=useState("Hadir"),[note,N]=useState("");
-const set=(k,v)=>S(x=>({...x,[k]:v}));const notify=x=>{Q(x);setTimeout(()=>Q(""),2300)};const url=location.origin+location.pathname+"?invite="+encodeURIComponent(d.bride.toLowerCase()+"-"+d.groom.toLowerCase());
+function App(){const[d,S]=useState(()=>{try{return {...initial,...JSON.parse(localStorage.getItem("vowinvite-draft")||"{}")}}catch{return initial}}),[tab,T]=useState("overview"),[mobile,M]=useState(false),[preview,P]=useState(false),[toast,Q]=useState(""),[guests,G]=useState([]),[guest,GN]=useState(""),[status,ST]=useState("Hadir"),[note,N]=useState("");
+useEffect(()=>{localStorage.setItem("vowinvite-draft",JSON.stringify(d))},[d]);
+const set=(k,v)=>S(x=>({...x,[k]:v}));const notify=x=>{Q(x);setTimeout(()=>Q(""),2300)};const payload=btoa(unescape(encodeURIComponent(JSON.stringify(d)))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");const url=location.origin+location.pathname+"?data="+payload;
 const copy=async()=>{try{await navigator.clipboard.writeText(url);notify("Link disalin!")}catch{notify("Browser tidak mengizinkan menyalin link.")}};
 const date=new Date(d.date+"T00:00:00");const dateText=date.toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
 const nav=[["overview",LayoutDashboard,"Overview"],["editor",Settings2,"Invitation editor"],["templates",Palette,"Templates"],["gallery",Image,"Media gallery"],["music",Music2,"Background music"],["guests",Users,"Guest & RSVP"]];
@@ -22,4 +24,5 @@ return <div className="app"><aside className={"sidebar "+(mobile?"open":"")}><di
 </div><footer className="footer">Made with care by <b>VowInvite Studio</b><span>Craft your moment. Share your story.</span></footer></main>
 {preview&&<div className="modal-bg" onClick={()=>P(false)}><div className="modal" onClick={e=>e.stopPropagation()}><header><b>Invitation preview</b><button className="icon-btn" onClick={()=>P(false)}><X/></button></header><div className="modal-body">{invite(true)}</div><footer><small>Preview mode · Draft is not published</small><button className="btn dark" onClick={copy}><Copy size={15}/> Copy invite link</button></footer></div></div>}
 {toast&&<div className="toast"><Check size={16}/>{toast}</div>}</div>}
-createRoot(document.getElementById("root")).render(<App/>);
+const params=new URLSearchParams(location.search);
+createRoot(document.getElementById("root")).render(params.has("data")?<PublicInvite/>:<App/>);
